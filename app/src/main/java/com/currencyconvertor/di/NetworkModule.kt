@@ -2,7 +2,7 @@ package com.currencyconvertor.di
 
 import android.content.Context
 import com.currencyconvertor.BuildConfig
-import com.currencyconvertor.data.remote.interceptor.AccessKeyInterceptor
+import com.currencyconvertor.data.remote.CurrencyConversionApi
 import com.currencyconvertor.data.remote.interceptor.NoConnectionInterceptor
 import com.currencyconvertor.utils.AppConstants
 import com.squareup.moshi.Moshi
@@ -26,7 +26,6 @@ class NetworkModule {
     @Provides
     fun providesOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
         val logging = HttpLoggingInterceptor()
-        val accessKeyInterceptor = AccessKeyInterceptor(BuildConfig.API_KEY)
 
         logging.level = if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor.Level.BODY
@@ -36,7 +35,6 @@ class NetworkModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(logging)
-            .addInterceptor(accessKeyInterceptor)
             .addInterceptor(NoConnectionInterceptor(context))
             .connectTimeout(AppConstants.APIConfig.TIMEOUT_DEFAULT, TimeUnit.SECONDS)
             .readTimeout(AppConstants.APIConfig.TIMEOUT_DEFAULT, TimeUnit.SECONDS)
@@ -59,7 +57,16 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun providesMoshi() = Moshi.Builder()
+    fun providesMoshi(): Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
+
+    @Singleton
+    @Provides
+    fun provideApi(
+        retrofit: Retrofit,
+    ): CurrencyConversionApi {
+        return retrofit.create(CurrencyConversionApi::class.java)
+    }
+
 }
