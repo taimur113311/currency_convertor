@@ -1,4 +1,4 @@
-package com.currencyconvertor
+package com.currencyconvertor.ui.currencyconversion
 
 import android.os.Bundle
 import android.util.Log
@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.currencyconvertor.R
 import com.currencyconvertor.ui.theme.CurrencyConvertorTheme
 
 class MainActivity : ComponentActivity() {
