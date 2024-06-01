@@ -5,4 +5,5 @@
     <string name="input_value">Input Value</string>
     <string name="to">To</string>
     <string name="from">From</string>
+    <string name="loading">Loading…</string>
 </resources>

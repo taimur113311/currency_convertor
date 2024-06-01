@@ -1,5 +1,6 @@
 package com.currencyconvertor.data.repository
 
+import com.currencyconvertor.BuildConfig
 import com.currencyconvertor.data.DataResource
 import com.currencyconvertor.data.callApi
 import com.currencyconvertor.data.remote.CurrencyConversionApi
@@ -16,7 +17,8 @@ class CurrencyConversionRepoImpl @Inject constructor(
 ) : CurrencyConversionRepo {
     override fun getCurrencyList(): Flow<DataResource<CurrencyConversionResponse>> = flow {
         emit(DataResource.Loading)
-        val result = callApi(currencyConversionApi::getCurrencyResponse)
+        val result =
+            callApi { currencyConversionApi.getCurrencyResponse() }
         emit(result)
     }.flowOn(Dispatchers.IO)
 }
