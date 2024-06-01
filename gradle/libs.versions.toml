@@ -1,25 +1,26 @@
 [versions]
 agp = "8.3.2"
-kotlin = "1.9.0"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.8.0"
+lifecycleRuntimeKtx = "2.8.1"
 activityCompose = "1.9.0"
 composeBom = "2024.05.00"
 uiTooling = "1.6.7"
 composeVersion = "1.6.7"
-hiltVersion = "2.48"
-retrofitVersion = "2.9.0"
+hiltVersion = "2.49"
+retrofitVersion = "2.11.0"
 moshiVersion = "1.15.1"
 moshiConverterVersion = "2.9.0"
 moshiKotlinVersion = "1.9.1"
 okhttpVersion = "5.0.0-alpha.3"
-lifecycleViewmodelComposeVersion = "2.8.0"
-composeLifecycleRuntime = "2.8.0"
-lifecycleKtxVersion = "2.8.0"
+lifecycleViewmodelComposeVersion = "2.8.1"
+composeLifecycleRuntime = "2.8.1"
+lifecycleKtxVersion = "2.8.1"
 hiltNavigationComposeVersion = "1.2.0"
+kspVersion = "2.0.0-1.0.21"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,5 +54,8 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
+hiltPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hiltVersion" }
+kspPlugin = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 

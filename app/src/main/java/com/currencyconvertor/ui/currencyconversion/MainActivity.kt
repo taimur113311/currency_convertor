@@ -8,11 +8,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,8 +26,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,6 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.currencyconvertor.R
+import com.currencyconvertor.ui.common.ErrorView
+import com.currencyconvertor.ui.common.LoadingView
 import com.currencyconvertor.ui.theme.CurrencyConvertorTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -70,8 +68,7 @@ fun CurrencyConverterScreen(viewModel: CurrencyConversionViewModel = hiltViewMod
 
     when (uiState) {
         is CurrencyConversionUIState.Loading -> {
-            // Show loading indicator
-            Text(text = "Loading...")
+            LoadingView()
         }
 
         is CurrencyConversionUIState.ContentState -> {
@@ -80,18 +77,16 @@ fun CurrencyConverterScreen(viewModel: CurrencyConversionViewModel = hiltViewMod
 
         is CurrencyConversionUIState.EmptyState -> {
             // Show empty state
-            Text(text = "No Data Available")
+            ErrorView(errorMessage = "No Data Available")
         }
 
         is CurrencyConversionUIState.Error -> {
             val errorMessage = (uiState as CurrencyConversionUIState.Error).message
             // Show error message
-            Text(text = "Error: $errorMessage")
+            ErrorView(errorMessage = errorMessage)
         }
 
-        else -> {
-
-        }
+        else -> {}
     }
 
 }
@@ -102,19 +97,11 @@ private fun ShowCurrencyConvertorView(
 ) {
     val fromCurrencyList by viewModel.fromCurrencyList.observeAsState()
     val toCurrencyList by viewModel.toCurrencyList.observeAsState()
+    val convertedAmount by viewModel.convertedAmount.observeAsState()
+    val fromCurrency by viewModel.fromCurrency.observeAsState("")
+    val toCurrency by viewModel.toCurrency.observeAsState("")
 
-    var fromCurrency by remember { mutableStateOf("") }
-    var toCurrency by remember { mutableStateOf("") }
-    var amount by remember { mutableIntStateOf(1) }
-    var convertedValue by remember {
-        mutableFloatStateOf(
-            convertCurrency(
-                fromCurrency,
-                toCurrency,
-                amount
-            )
-        )
-    }
+    val amount by viewModel.amount.observeAsState(1)
 
     LazyColumn(
         modifier = Modifier
@@ -134,9 +121,8 @@ private fun ShowCurrencyConvertorView(
                     selectedValue = fromCurrency,
                     options = fromCurrencyList?.keys?.toList(),
                     label = stringResource(R.string.from),
-                    onValueChangedEvent = {
-                        fromCurrency = it
-                        viewModel.filterCurrencies(toCurrency)
+                    onValueChangedEvent = { newCurrency ->
+                        viewModel.updateFromCurrency(newCurrency)
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -150,19 +136,22 @@ private fun ShowCurrencyConvertorView(
                     modifier = Modifier
                         .size(48.dp)
                         .padding(horizontal = 8.dp)
-                        .clickable { }
+                        .clickable { viewModel.swapCurrencies() }
                 )
                 DynamicSelectTextField(
                     selectedValue = toCurrency,
                     options = toCurrencyList?.keys?.toList(),
                     label = stringResource(R.string.to),
-                    onValueChangedEvent = { toCurrency = it },
+                    onValueChangedEvent = { newCurrency ->
+                        viewModel.updateToCurrency(newCurrency)
+
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 8.dp)
                 )
-                Log.d("info fromCurrency ", fromCurrency)
-                Log.d("info toCurrency ", toCurrency)
+                fromCurrency.let { Log.d("info fromCurrency ", it) }
+                toCurrency.let { Log.d("info toCurrency ", it) }
             }
             Row(
                 modifier = Modifier
@@ -174,12 +163,9 @@ private fun ShowCurrencyConvertorView(
                 // Input value
                 OutlinedTextField(
                     value = amount.toString(),
-                    onValueChange = {
-                        if (it.isNotEmpty()) {
-                            amount = it.toInt()
-                            convertedValue = convertCurrency(fromCurrency, toCurrency, amount)
-                        } else
-                            amount = 1
+                    onValueChange = { newAmount ->
+                        val parsedAmount = newAmount.toIntOrNull() ?: 1
+                        viewModel.updateAmount(parsedAmount)
                     },
                     label = { Text(stringResource(R.string.input_value)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -188,41 +174,23 @@ private fun ShowCurrencyConvertorView(
                         .padding(end = 8.dp),
                 )
 
-
                 // Output value
-                OutlinedTextField(
-                    value = convertedValue.toString(),
-                    onValueChange = { /* This field is read-only. */ },
-                    label = { Text(stringResource(R.string.output_value)) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 8.dp)
-                )
+                convertedAmount?.let {
+                    OutlinedTextField(
+                        value = it.toString(),
+                        onValueChange = { /* This field is read-only. */ },
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.output_value)) },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp)
+                    )
+                }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-//            Column {
-//                // Convert button
-//                Button(
-//                    onClick = {
-//                    },
-//                    shape = RoundedCornerShape(10.dp),
-//                    modifier = Modifier.align(Alignment.CenterHorizontally)
-//                ) {
-//                    Text(stringResource(R.string.details))
-//                }
-//            }
-
         }
     }
 }
 
-
-//Sample conversion code for design
-fun convertCurrency(fromCurrency: String, toCurrency: String, amount: Int): Float {
-    return amount * 2.0f
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -263,7 +231,6 @@ fun DynamicSelectTextField(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

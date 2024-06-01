@@ -1,8 +1,10 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("com.google.dagger.hilt.android")
-    id("kotlin-kapt")
+    alias(libs.plugins.hiltPlugin)
+    alias(libs.plugins.kspPlugin)
+    alias(libs.plugins.compose.compiler)
+
 }
 
 android {
@@ -82,7 +84,7 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Networking
     implementation(libs.retrofit)
