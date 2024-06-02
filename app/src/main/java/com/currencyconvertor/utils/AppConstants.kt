@@ -6,4 +6,6 @@ object AppConstants {
         const val TIMEOUT_DEFAULT = 30L
     }
 
+    const val BASE_CURRENCY="EUR"
+
 }

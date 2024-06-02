@@ -6,4 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface CurrencyConversionRepo {
     fun getCurrencyList(): Flow<DataResource<CurrencyConversionResponse>>
+
+    fun getHistoricalData(date:String,currencySymbol:String):Flow<DataResource<CurrencyConversionResponse>>
 }

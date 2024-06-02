@@ -15,18 +15,16 @@ fun Navigation() {
             enterTransition = null,
             exitTransition = null
         ) {
-            CurrencyConverterScreen(detailsScreen = { fromCurrency, toCurrency ->
-                navController.navigate(Screen.HistoryScreen.createRoute(fromCurrency, toCurrency))
+            CurrencyConverterScreen(detailsScreen = { baseCurrency,fromCurrency, toCurrency ->
+                navController.navigate(Screen.HistoryScreen.createRoute(baseCurrency,fromCurrency, toCurrency))
             })
         }
         composable(
             route = Screen.HistoryScreen.route,
             enterTransition = null,
             exitTransition = null
-        ) { backStackEntry ->
-            val fromCurrency = backStackEntry.arguments?.getString("fromCurrency") ?: ""
-            val toCurrency = backStackEntry.arguments?.getString("toCurrency") ?: ""
-            ConversionHistory(fromCurrency = fromCurrency, toCurrency = toCurrency)
+        ) {
+            ConversionHistory()
         }
     }
 }

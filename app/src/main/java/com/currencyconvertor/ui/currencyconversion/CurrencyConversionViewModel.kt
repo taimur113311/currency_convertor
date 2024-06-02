@@ -10,13 +10,15 @@ import com.currencyconvertor.data.onLoading
 import com.currencyconvertor.data.onSuccess
 import com.currencyconvertor.data.remote.model.CurrencyConversionResponse
 import com.currencyconvertor.domain.usecase.CurrencyConversionListUseCase
+import com.currencyconvertor.utils.AppConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CurrencyConversionViewModel @Inject constructor(private val currencyConversionListUseCase: CurrencyConversionListUseCase) :
-    ViewModel() {
+class CurrencyConversionViewModel @Inject constructor(
+    private val currencyConversionListUseCase: CurrencyConversionListUseCase
+) : ViewModel() {
 
     private val _uiState = MutableLiveData<CurrencyConversionUIState>()
     val uiState: LiveData<CurrencyConversionUIState> = _uiState
@@ -51,8 +53,10 @@ class CurrencyConversionViewModel @Inject constructor(private val currencyConver
                         _uiState.value = CurrencyConversionUIState.ContentState
                         _responseData.value = this.data
                         val rates = _responseData.value?.rates
-                        val initialFromCurrency = rates?.get("EUR")?.let { "EUR" } ?: rates?.keys?.firstOrNull()
-                        val initialToCurrency = rates?.get("USD")?.let { "USD" } ?: rates?.keys?.elementAtOrNull(1)
+                        val initialFromCurrency =
+                            rates?.get("EUR")?.let { "EUR" } ?: rates?.keys?.firstOrNull()
+                        val initialToCurrency =
+                            rates?.get("USD")?.let { "USD" } ?: rates?.keys?.elementAtOrNull(1)
 
                         _fromCurrency.value = initialFromCurrency ?: ""
                         _toCurrency.value = initialToCurrency ?: ""
@@ -118,5 +122,9 @@ class CurrencyConversionViewModel @Inject constructor(private val currencyConver
             _convertedAmount.value =
                 (baseCurrency / fromRate * toRate * amount).toFloat()
         }
+    }
+
+    fun getBaseCurrency(): String {
+        return _responseData.value?.base ?: AppConstants.BASE_CURRENCY
     }
 }

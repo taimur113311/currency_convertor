@@ -1,6 +1,5 @@
 package com.currencyconvertor.data.repository
 
-import com.currencyconvertor.BuildConfig
 import com.currencyconvertor.data.DataResource
 import com.currencyconvertor.data.callApi
 import com.currencyconvertor.data.remote.CurrencyConversionApi
@@ -21,4 +20,21 @@ class CurrencyConversionRepoImpl @Inject constructor(
             callApi { currencyConversionApi.getCurrencyResponse() }
         emit(result)
     }.flowOn(Dispatchers.IO)
+
+    override fun getHistoricalData(
+        date: String,
+        currencySymbol: String
+    ): Flow<DataResource<CurrencyConversionResponse>> =
+        flow {
+            emit(DataResource.Loading)
+            val result =
+                callApi {
+                    currencyConversionApi.getHistoricalRates(
+                        date = date,
+                        symbols = currencySymbol
+                    )
+                }
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+
 }
