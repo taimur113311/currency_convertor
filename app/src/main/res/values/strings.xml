@@ -6,4 +6,6 @@
     <string name="to">To</string>
     <string name="from">From</string>
     <string name="loading">Loading…</string>
+    <string name="last_3_days_history">Last 3 days History</string>
+    <string name="popular_currencies_conversion">Popular Currencies Conversion</string>
 </resources>
