@@ -83,14 +83,6 @@ fun HistoricalDataScreen(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxHeight(0.2f)
-                .fillMaxWidth()
-                .background(color = Color.Green)
-        ) {
-            Text(text = "Chart")
-        }
-        Row(
-            modifier = Modifier
                 .padding(vertical = 10.dp)
                 .fillMaxWidth()
         ) {
