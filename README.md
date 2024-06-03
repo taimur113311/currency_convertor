@@ -8,6 +8,7 @@ A modern and efficient currency converter application built using Jetpack Compos
 ## Features
 
 - Real-time Currency Conversion: Convert between different currencies using the latest exchange rates.
+    -  Switch currency: Easily switch between selected currencies, e.g., from USD to AED and vice versa.
 - Historical Data: View historical conversion data for the last three days.
 - Popular Currencies Conversion: Displays conversions from the base currency to popular currencies like USD, EUR, GBP, JPY, and AUD.
 - Responsive UI: Utilizes Jetpack Compose for a modern and responsive user interface.
